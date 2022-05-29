@@ -13,16 +13,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
-  LatLng latlng = LatLng(51.5, -0.09);
-
-  void getLatLng() async{
-    latlng =  await UtilServices.getPosition();
-  }
-
   @override
-  void initState(){
-    getLatLng();
+  void initState() {
     UtilServices.enableGeoLocation();
     super.initState();
   }
@@ -35,22 +27,32 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Colors.white,
       ),
       body: Center(
-        child: FlutterMap(
-          options: MapOptions(
-            center: latlng,
-            zoom: 13.0,
-          ),
-          layers: [
-            TileLayerOptions(
-                urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                subdomains: ['a', 'b', 'c']
-            ),
-            MarkerLayerOptions(
-              markers: [],
-            ),
-          ],
-        ),
-      ),
+          child: FutureBuilder(
+        future: UtilServices.getPosition(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return FlutterMap(
+              options: MapOptions(
+                center: snapshot.data as LatLng,
+                zoom: 13.0,
+              ),
+              layers: [
+                TileLayerOptions(
+                    urlTemplate:
+                        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    subdomains: ['a', 'b', 'c']),
+                MarkerLayerOptions(
+                  markers: [],
+                ),
+              ],
+            );
+          }
+
+          return const CircularProgressIndicator(
+            color: Colors.lightGreen,
+          );
+        },
+      )),
     );
   }
 }
