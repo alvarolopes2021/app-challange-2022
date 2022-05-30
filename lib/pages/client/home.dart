@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
         foregroundColor: Colors.white,
       ),
       body: Center(
-          child: FutureBuilder(
+        child: FutureBuilder(
         future: UtilServices.getPosition(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
