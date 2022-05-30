@@ -1,16 +1,31 @@
 import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:ispfinder/constants.dart';
 
 class InstallerController {
-
   static Future<String> getInstallers() async {
-    Response response;
+
+    Response? response;
     var dio = Dio();
 
-    response = await dio.get(Constants.GET_INSTALLERS);
-    
-    print(response.data.toString());
+    try {
+      response = await dio.get(
+        Constants.GET_INSTALLERS,
+        options: Options(
+          contentType: "application/json",
+          headers: {'Content-type': 'application/json', 'Accept': 'application/json',}
+        )
+      );
+    } 
+    catch (e) {
+      print(e.toString());
+    }
 
-    return response.data.toString();
+    if(response == null){
+      return "";
+    }      
+
+    return json.encode(response.data);
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:ispfinder/models/installer.model.dart';
+import 'package:ispfinder/services/installerServices.dart';
+import 'package:ispfinder/services/mapServices.dart';
 import 'package:ispfinder/services/utils.dart';
 import "package:latlong2/latlong.dart";
 
@@ -28,23 +31,34 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: FutureBuilder(
-        future: UtilServices.getPosition(),
+        future: UtilServices.getPosition(), //gets user location
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return FlutterMap(
-              options: MapOptions(
-                center: snapshot.data as LatLng,
-                zoom: 13.0,
-              ),
-              layers: [
-                TileLayerOptions(
-                    urlTemplate:
-                        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    subdomains: ['a', 'b', 'c']),
-                MarkerLayerOptions(
-                  markers: [],
-                ),
-              ],
+          if (snapshot.hasData) {  //after trying to get user location
+            return FutureBuilder(
+              future: InstallerServices.getInstallers(), //get all installers
+              builder: (installerContext, installerSnapshot) {
+                if (installerSnapshot.hasData) {
+
+                  return FlutterMap(
+                    options: MapOptions(
+                      center: snapshot.data as LatLng,
+                      zoom: 8.0,
+                    ),
+                    layers: [
+                      TileLayerOptions(
+                          urlTemplate:
+                              "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          subdomains: ['a', 'b', 'c']),
+                      MarkerLayerOptions(
+                        markers: MapServices.generateMarkers(installerSnapshot.data as List<InstallerModel>),
+                      ),
+                    ],
+                  );
+                }
+                return const CircularProgressIndicator(
+                  color: Colors.lightGreen,
+                );
+              },
             );
           }
 
