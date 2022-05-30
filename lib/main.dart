@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:ispfinder/constants.dart';
-import 'package:ispfinder/home.dart';
+import 'package:ispfinder/pages/client/home.dart';
 
 void main() {
   runApp(const MyApp());
